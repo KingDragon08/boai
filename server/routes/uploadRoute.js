@@ -41,7 +41,7 @@ router.post('/img', multipart(), function (req, res) {
                 //上传到阿里云
                 var expiresDate = new Date().setFullYear(2099);
                 oss.putObject.sync(oss, {
-                    Bucket: 'mbbxvip',
+                    Bucket: 'boai-oss',
                     Key: fileName,
                     Body: content,
                     AccessControlAllowOrigin: '',

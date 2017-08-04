@@ -102,7 +102,7 @@ router.post('/upload', multipart(), function (req, res) {
                     //上传到阿里云
                     var expiresDate = new Date().setFullYear(2099);
                     oss.putObject.sync(oss, {
-                        Bucket: 'mbbxvip',
+                        Bucket: 'boai-oss',
                         Key: fileName,
                         Body: content,
                         AccessControlAllowOrigin: '',
@@ -231,7 +231,8 @@ function uploadImgToBDBCE(res, fileArr, client, bucket, imgUrlArr, i) {
         var currentDate = dateFormat(new Date(), "yyyy-MM-dd");
         //自定义图片名称
 //        var key =   "test/" + uuid.v1().replace(/-/ig, "") + ".png";
-        var key = currentDate + "/" + uuid.v1().replace(/-/ig, "") + ".png";
+        //var key = currentDate + "/" + uuid.v1().replace(/-/ig, "") + ".png";
+        var key = currentDate + "/" + uuid.v1().replace(/-/ig, "") + "." + fileExt;
         //云端图片地址
         var imgUrl = AppConfig.URL.BDBCD_CDN_FILE_BASE_URL + key;
         client.putObjectFromFile(bucket, key, temp_path).then(function (response) {

@@ -10,17 +10,17 @@ var AppConfig = {};
 AppConfig.DB_CONFIG = DB_CONFIG;
 
 AppConfig.OSS_CONFIG = {
-    accessKeyId: "Sbyr9xoER6Ns5ZNp",
-    secretAccessKey: "sQZdNqDiI2tsUllYGbqRSMCDO6KFsz",
-    endpoint: 'http://oss-cn-hangzhou.aliyuncs.com',
+    accessKeyId: "LTAI7mWA3zND8Cy1",
+    secretAccessKey: "r11buwRp91PNHyMFQo53Yja62vnYSa",
+    endpoint: 'http://oss-cn-beijing.aliyuncs.com',
     apiVersion: '2013-10-15'
 };
 
 AppConfig.BDBCE_CONFIG = {
-    accessKeyId: "9bde49fb40514ea8bab0442a530f4589",
-    secretAccessKey: "58e62c6548ec4a8f861fdfed8c8f8bef",
+    accessKeyId: "01c91490897c4340a0aab1ef75f63bbd",
+    secretAccessKey: "fee731835b3c462fa44091f879dfd312",
     endpoint: 'http://bj.bcebos.com',
-    bucketName: "bbx-new-static"
+    bucketName: "boai-bos"
 };
 
 AppConfig.PAGING_CONFIG = {
@@ -82,9 +82,9 @@ AppConfig.ACTION_GOODS_SALE_STATE = {
 };
 
 AppConfig.URL = {
-    ALY_FILE_BASE_URL: "http://mbbxvip.oss-cn-hangzhou.aliyuncs.com/",
-    BDBCE_FILE_BASE_URL: "http://bbx-new-static.bj.bcebos.com/",
-    BDBCD_CDN_FILE_BASE_URL: "http://res1.bbxvip.com/"
+    ALY_FILE_BASE_URL: "http://boai-oss.oss-cn-beijing.aliyuncs.com/",
+    BDBCE_FILE_BASE_URL: "http://boai-bos.bj.bcebos.com/",
+    BDBCD_CDN_FILE_BASE_URL: "http://boai-bos.cdn.bcebos.com/"
 };
 
 
