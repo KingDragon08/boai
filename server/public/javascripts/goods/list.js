@@ -66,6 +66,7 @@ goods.list = {
      * @private
      */
     _getDetailSucc: function (data, parm) {
+        console.log(data);
         var totalPageNum = Math.ceil(parseInt(data.data.total) / 100);
         var curPageIndex = parm.succ.args.pageIndex;
         goods.list.refreshTable(data.data.goods, curPageIndex);

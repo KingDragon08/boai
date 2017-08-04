@@ -278,7 +278,7 @@ function getGroupInfo() {
     //快递费用
     goodsGroup.express_fee = $("#expressFeeInput").val();
 
-    getFinalSkus();
+    /*getFinalSkus();
     if (goodsGroup.sku.length < 1) {
         layer.alert("请设定商品规则。");
         return false;
@@ -286,7 +286,7 @@ function getGroupInfo() {
     var skuResult = validateSku();
     if (!skuResult) {
         return false;
-    }
+    }*/
 
     var imgPaths = [];
     $("#thumbContainer_edit img").each(function (i, img) {
@@ -462,9 +462,9 @@ function showEditGroupInfo(groupInfo) {
     //快递费用
     $("#expressFeeInput").val(groupInfo.express_fee);
 
-    $("#tagAttr_edit").empty().append('<label class="radio"><input type="radio" name="optionsRadios_sex" value="0"/>无性别区分</label>' +
-    '<label class="radio"><input type="radio" name="optionsRadios_sex" value="1"/>男童</label>' +
-    '<label class="radio"><input type="radio" name="optionsRadios_sex" value="2"/>女童</label>');
+    $("#tagAttr_edit").empty().append('<label class="radio"><input type="radio" name="optionsRadios_sex" value="0"/>不推荐</label>' +
+    '<label class="radio"><input type="radio" name="optionsRadios_sex" value="1"/>半屏推荐</label>' +
+    '<label class="radio"><input type="radio" name="optionsRadios_sex" value="2"/>全屏推荐</label>');
     $('#tagAttr_edit input[name="optionsRadios_sex"]').each(function (index, ele) {
         if (ele.value == groupInfo.tag) {
             $(ele).attr('checked', true);

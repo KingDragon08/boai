@@ -15,6 +15,9 @@ function bindCommands() {
         if (!result) {
             return;
         }
+        console.log(result);
+        console.log(goodsGroup);
+        return;
         if (editGroupInfo && editGroupInfo.State == 3) {
             //如果当前已经是审核通过了，则需要改变flowState到未审核状态
             goodsGroup.State = 1;
@@ -318,7 +321,6 @@ function getGroupInfo() {
     if (!formResult) {
         return false;
     }
-
     goodsGroup.category = $("#categorySelect").children("option:selected").data("categoryInfo");
     goodsGroup.goodsGroupTitle = $("#goodsGroupTitleInput").val();
     goodsGroup.outerId = $("#outerIdInput").val();
@@ -329,14 +331,14 @@ function getGroupInfo() {
     goodsGroup.goodsDetail = $('#summernote').code();
 
     getFinalSkus();
-    if (goodsGroup.sku.length < 1) {
+    /*if (goodsGroup.sku.length < 1) {
         layer.alert("请设定商品规则。");
         return false;
     }
     var skuResult = validateSku();
     if (!skuResult) {
         return false;
-    }
+    }*/
 
     var imgPaths = [];
     $("#thumbContainer img").each(function (i, img) {
@@ -765,9 +767,9 @@ function showEditGroupInfo(groupInfo) {
     $("#goodsGroupTitleInput").val(groupInfo.goodsGroupTitle);
     $("#outerIdInput").val(groupInfo.outerId);
     $("#priceInput").val(groupInfo.price);
-    $("#targetPerson").empty().append('<label class="radio"><input type="radio" name="optionsRadios_sex" value="0"/>无性别区分</label>' +
-    '<label class="radio"><input type="radio" name="optionsRadios_sex" value="1"/>男童</label>' +
-    '<label class="radio"><input type="radio" name="optionsRadios_sex" value="2"/>女童</label>');
+    $("#targetPerson").empty().append('<label class="radio"><input type="radio" name="optionsRadios_sex" value="0"/>不推荐</label>' +
+    '<label class="radio"><input type="radio" name="optionsRadios_sex" value="1"/>半屏推荐</label>' +
+    '<label class="radio"><input type="radio" name="optionsRadios_sex" value="2"/>全屏推荐</label>');
     $('#targetPerson input[name="optionsRadios_sex"]').each(function (index, ele) {
         if (ele.value == groupInfo.tag) {
             $(ele).attr('checked', true);

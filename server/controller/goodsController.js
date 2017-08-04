@@ -61,7 +61,7 @@ function getGoodsGroups(req, res) {
 
 
             if (req.body.queryKeyStr) {
-                where = where + ' and (GoodsGroupTitle like "%' + req.body.queryKeyStr + '%" or Outeriid like "%' + req.body.queryKeyStr + '%") ';
+                where = where + ' and (GoodsTitle like "%' + req.body.queryKeyStr + '%" or Outeriid like "%' + req.body.queryKeyStr + '%") ';
             }
             if (req.body.saleState && req.body.saleState != '-1') {
                 switch (req.body.saleState) {
@@ -74,12 +74,12 @@ function getGoodsGroups(req, res) {
                 }
             }
 
-            sql = 'SELECT Id,GoodsGroupTitle,GoodsSaleState,GoodsImgPath,State,CreateTime ' +
-                ' FROM  bbx_view_goodsgroup_list A  '
-                + where + '  ORDER BY UpdateTime desc limit ' + skipNum + ',' + pageSize;
+            sql = 'SELECT Id,GoodsTitle,GoodsSaleState,GoodsImgPath,CreateTime ' +
+                ' FROM  bbx_goods A  '
+                + where + '  ORDER BY CreateTime desc limit ' + skipNum + ',' + pageSize;
             var result = mysql_db.query.sync(mysql_db, sql)[0];
 
-            var sql2 = 'SELECT  count(1) AS count FROM  bbx_view_goodsgroup_list A ' + where;
+            var sql2 = 'SELECT  count(1) AS count FROM  bbx_goods A ' + where;
             var result2 = mysql_db.query.sync(mysql_db, sql2)[0];
 
             var list = [], temp;
@@ -91,7 +91,7 @@ function getGoodsGroups(req, res) {
                     Id: temp.Id,
                     ActionId: temp.ActionId,
                     ActionTitle: temp.ActionTitle,
-                    goodsGroupTitle: temp.GoodsGroupTitle,
+                    goodsGroupTitle: temp.GoodsTitle,
                     GoodsSaleState: temp.GoodsSaleState,
                     //上架状态 0 未上架  1 已上架 2 已下架
                     addedState: temp.GoodsSaleState,
@@ -101,10 +101,10 @@ function getGoodsGroups(req, res) {
                         BrandTitle: temp.BrandTitle,
                         BrandState: temp.BrandState
                     },
-                    State: temp.State
+                    State: 1
                 })
             }
-            res.json({"code": 200, "data": {goods: list, total: result2[0].count}});
+            res.json({"code": 200, "data": {goods: list, total: result2[0].count,sql:sql}});
         } catch (e) {
             console.error(e);
             res.json({"code": 300, "data": null});
@@ -419,77 +419,105 @@ function _addGoodsGroup(group) {
     console.log('begin*********');
     console.log(group);
     try {
-        var insert_result = mysql_db.query.sync(
-            mysql_db,
-            'insert into bbx_goodsgroup (Id,GoodsGroupTitle,GoodsGroupSubTitle,GoodsDetail,CreateTime,GoodsImgPath,GoodsPrice,' +
-            'CategoryId,Outeriid,Tag,GoodsSaleState,UpdateTime) values(?,?,?,?,now(),?,?,?,?,?,?,now())',
-            [groupId, group.goodsGroupTitle, group.goodsGroupTitle,
-                group.goodsDetail,  group.imgPaths[0],
-                group.price, group.category.Id,group.outerId, group.tag,group.saleState ]
-        );
-
+        var isRec = parseInt(group.tag);
+        if(isRec==0){
+            var insert_result = mysql_db.query.sync(
+                mysql_db,
+                'insert into bbx_goods (Id,GoodsTitle,GoodsShortTitle,goodsDesc,'+
+                'CreateTime,GoodsImgPath,GoodsPrice,' +
+                'goodsType,GoodsSaleState,isRec) values(?,?,?,?,now(),?,?,?,?,?)',
+                [groupId,group.goodsGroupTitle,group.goodsGroupTitle,
+                    group.goodsDetail,group.imgPaths[0],
+                    group.price,group.category.Id,group.saleState,isRec]
+            );    
+        }
+        if(isRec==1){
+            var insert_result = mysql_db.query.sync(
+                mysql_db,
+                'insert into bbx_goods (Id,GoodsTitle,GoodsShortTitle,goodsDesc,'+
+                'CreateTime,GoodsImgPath,GoodsPrice,' +
+                'goodsType,GoodsSaleState,isRec,recHalf) values(?,?,?,?,now(),?,?,?,?,?,?)',
+                [groupId,group.goodsGroupTitle,group.goodsGroupTitle,
+                    group.goodsDetail,group.imgPaths[1],
+                    group.price,group.category.Id,group.saleState,isRec,group.imgPaths[0]]
+            );   
+        }
+        if(isRec==2){
+            var insert_result = mysql_db.query.sync(
+                mysql_db,
+                'insert into bbx_goods (Id,GoodsTitle,GoodsShortTitle,goodsDesc,'+
+                'CreateTime,GoodsImgPath,GoodsPrice,' +
+                'goodsType,GoodsSaleState,isRec,recFull) values(?,?,?,?,now(),?,?,?,?,?,?)',
+                [groupId,group.goodsGroupTitle,group.goodsGroupTitle,
+                    group.goodsDetail,group.imgPaths[1],
+                    group.price,group.category.Id,group.saleState,isRec,group.imgPaths[0]]
+            );   
+        }
         console.log('insert_result*********');
         console.log(insert_result);
 
-        for (var i = 0; i < group.sku.length; i++) {
-            var goodsId = uuid.v1().replace(/-/ig, "") + "";
-            group.sku[i].sell_price = parseFloat((group.sku[i].supply_price * 1.1).toFixed(1));
-            var goodsCostPrice = group.sku[i].sell_price;
-            var goodsStock = 0;
-            var goodsImgPath = "";
-            var goodsNumber = "";
-            var outerId = group.sku[i].outer_id || group.outerId;
-            var skuId = group.sku[i].sku_id;
+        // for (var i = 0; i < group.sku.length; i++) {
+        //     var goodsId = uuid.v1().replace(/-/ig, "") + "";
+        //     group.sku[i].sell_price = parseFloat((group.sku[i].supply_price * 1.1).toFixed(1));
+        //     var goodsCostPrice = group.sku[i].sell_price;
+        //     var goodsStock = 0;
+        //     var goodsImgPath = "";
+        //     var goodsNumber = "";
+        //     var outerId = group.sku[i].outer_id || group.outerId;
+        //     var skuId = group.sku[i].sku_id;
 
-            var filterConfig = group.sku[i].title;
-            var childTitle = group.goodsGroupTitle + " " + filterConfig;
-            var quantity = group.sku[i].quantity;
-            var supplyPrice = group.sku[i].supply_price;
-            //在已有的库存上加上20% 取整
-            var count = Math.ceil(quantity * 1.2);
+        //     var filterConfig = group.sku[i].title;
+        //     var childTitle = group.goodsGroupTitle + " " + filterConfig;
+        //     var quantity = group.sku[i].quantity;
+        //     var supplyPrice = group.sku[i].supply_price;
+        //     //在已有的库存上加上20% 取整
+        //     var count = Math.ceil(quantity * 1.2);
 
-            mysql_db.query.sync(
-                mysql_db,
-                'insert into bbx_goods(Id, GoodsTitle,GoodsShortTitle,GoodsPrice,GoodsCostPrice,GoodsStock,GoodsImgPath,' +
-                'GoodsNumber,CreateTime,Outeriid,Skuid,GoodsGroupId,FilterConfig,MaxCount,OriginalCount,GoodsSalePrice,' +
-                ' LimitCount,GoodsSupplyPrice) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
-                [goodsId, childTitle, childTitle,
-                    group.price, goodsCostPrice, goodsStock, goodsImgPath, goodsNumber, group.createTime,
-                    outerId, skuId, groupId, filterConfig, quantity, count, goodsCostPrice, 0, supplyPrice]
-            );
-        }
+        //     mysql_db.query.sync(
+        //         mysql_db,
+        //         'insert into bbx_goods(Id, GoodsTitle,GoodsShortTitle,GoodsPrice,GoodsCostPrice,GoodsStock,GoodsImgPath,' +
+        //         'GoodsNumber,CreateTime,Outeriid,Skuid,GoodsGroupId,FilterConfig,MaxCount,OriginalCount,GoodsSalePrice,' +
+        //         ' LimitCount,GoodsSupplyPrice) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+        //         [goodsId, childTitle, childTitle,
+        //             group.price, goodsCostPrice, goodsStock, goodsImgPath, goodsNumber, group.createTime,
+        //             outerId, skuId, groupId, filterConfig, quantity, count, goodsCostPrice, 0, supplyPrice]
+        //     );
+        // }
 
         //插入bbx_goods4filterconfig
-        var sizeFilterId = uuid.v1().replace(/-/ig, "") + "";
-        var sizeFilter = "";
-        for (var i = 0; i < group.customConfig.sizes.length; i++) {
-            if (group.customConfig.sizes[i].checked) {
-                sizeFilter = sizeFilter + "," + group.customConfig.sizes[i].size;
-            }
-        }
-        sizeFilter = sizeFilter.replace(",", "");
-        mysql_db.query.sync(
-            mysql_db,
-            'insert into bbx_goods4filterconfig values(?,?,?,?,?,?)',
-            [sizeFilterId, "", "尺码", sizeFilter, groupId, 2]
-        );
+        // var sizeFilterId = uuid.v1().replace(/-/ig, "") + "";
+        // var sizeFilter = "";
+        // for (var i = 0; i < group.customConfig.sizes.length; i++) {
+        //     if (group.customConfig.sizes[i].checked) {
+        //         sizeFilter = sizeFilter + "," + group.customConfig.sizes[i].size;
+        //     }
+        // }
+        // sizeFilter = sizeFilter.replace(",", "");
+        // mysql_db.query.sync(
+        //     mysql_db,
+        //     'insert into bbx_goods4filterconfig values(?,?,?,?,?,?)',
+        //     [sizeFilterId, "", "尺码", sizeFilter, groupId, 2]
+        // );
 
-        var colorFilterId = uuid.v1().replace(/-/ig, "") + "";
-        var colorFilter = "";
-        for (var i = 0; i < group.customConfig.colors.length; i++) {
-            if (group.customConfig.colors[i].checked) {
-                colorFilter = colorFilter + "," + group.customConfig.colors[i].color;
-            }
-        }
-        colorFilter = colorFilter.replace(",", "");
-        mysql_db.query.sync(
-            mysql_db,
-            'insert into bbx_goods4filterconfig values(?,?,?,?,?,?)',
-            [colorFilterId, "", "颜色", colorFilter, groupId, 1]
-        );
-
+        // var colorFilterId = uuid.v1().replace(/-/ig, "") + "";
+        // var colorFilter = "";
+        // for (var i = 0; i < group.customConfig.colors.length; i++) {
+        //     if (group.customConfig.colors[i].checked) {
+        //         colorFilter = colorFilter + "," + group.customConfig.colors[i].color;
+        //     }
+        // }
+        // colorFilter = colorFilter.replace(",", "");
+        // mysql_db.query.sync(
+        //     mysql_db,
+        //     'insert into bbx_goods4filterconfig values(?,?,?,?,?,?)',
+        //     [colorFilterId, "", "颜色", colorFilter, groupId, 1]
+        // );
         //插入bbx_goodsimages
-        for (var i = 0; i < group.imgPaths.length; i++) {
+        var start = 0;
+        if(isRec>0){
+            start = 1;
+        }
+        for (var i = start; i < group.imgPaths.length; i++) {
             var imgId = uuid.v1().replace(/-/ig, "") + "";
             mysql_db.query.sync(
                 mysql_db,

@@ -132,18 +132,18 @@
                                                 </div>
                                             </div>
 
-                                            <div class="control-group">
+                                            <div class="control-group" style="display: none;">
                                                 <label class="control-label">商品编码</label>
 
                                                 <div class="controls">
-                                                    <input id="outerIdInput_edit" type="text" required="true" placeholder="字母+数字，同一品牌下不能重复"
+                                                    <input id="outerIdInput_edit" type="text" placeholder="字母+数字，同一品牌下不能重复"
                                                            class="m-wrap large"/>
                                                     <span class="help-inline"
                                                           style="display: none;color: red">*此项为必填项</span>
                                                 </div>
                                             </div>
                                             <div class="control-group">
-                                                <label class="control-label">商品吊牌价</label>
+                                                <label class="control-label">商品价格</label>
 
                                                 <div class="controls">
                                                     <input id="priceInput_edit" type="text" required="true" placeholder="数字格式"
@@ -154,11 +154,11 @@
                                             </div>
 
                                             <div class="control-group">
-                                                <label class="control-label">适用人群</label>
+                                                <label class="control-label">是否推荐</label>
                                                 <div class="controls" id="targetPerson" curid="0">
-                                                    <label class="radio"><input type="radio" name="optionsRadios_sex" value="0" checked/>无性别区分</label>
-                                                    <label class="radio"><input type="radio" name="optionsRadios_sex" value="1"/>男童</label>
-                                                    <label class="radio"><input type="radio" name="optionsRadios_sex" value="2"/>女童</label>
+                                                    <label class="radio"><input type="radio" name="optionsRadios_sex" value="0" checked/>不推荐</label>
+                                                    <label class="radio"><input type="radio" name="optionsRadios_sex" value="1"/>半屏推荐</label>
+                                                    <label class="radio"><input type="radio" name="optionsRadios_sex" value="2"/>全屏推荐</label>
                                                 </div>
                                             </div>
 
@@ -169,7 +169,7 @@
                                                     <label class="radio"><input type="radio" name="saleState" value="1"/>是</label>
                                                 </div>
                                             </div>
-                                            <div class="control-group">
+                                            <div class="control-group" style="display: none;">
                                                 <label class="control-label">商品规则（颜色）</label>
 
                                                 <div id="category_color" class="controls">
@@ -182,7 +182,7 @@
                                                     <%}%>
                                                 </div>
                                             </div>
-                                            <div class="control-group">
+                                            <div class="control-group" style="display: none;">
                                                 <label class="control-label">商品规则（尺码）</label>
 
                                                 <div id="category_size" class="controls">
@@ -195,7 +195,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="control-group">
+                                            <div class="control-group" style="display: none;">
                                                 <label class="control-label">子商品</label>
 
                                                 <div class="controls" id="childrenGoods">
@@ -222,7 +222,7 @@
                                                             <input id="inputFile_groupImg" name="files" type="file" multiple="multiple" accept=".jpg,.jpeg,.png,.bmp,.gif">
                                                         </span>
                                                         </form>
-                                                        <span class="help-inline" style="color: red">&nbsp 1.点击选中商品图片作为商品展示封面 &nbsp&nbsp 2.商品图片应小于200kb，大于50kb</span>
+                                                        <span class="help-inline" style="color: red">&nbsp 1.第一张为推荐图（若勾选推荐），第一张为封面图（若不勾选推荐） &nbsp&nbsp 2.商品图片应小于200kb，大于50kb</span>
                                                     </div>
                                                 </div>
                                             </div>

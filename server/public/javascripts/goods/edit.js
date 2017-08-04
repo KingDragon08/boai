@@ -23,7 +23,7 @@ goods.edit = {
      */
     init: function () {
         goods.edit._curGroupId = common.QueryString('goodsGroupId');
-        goods.addAndEdit.skus._skusShow();
+        //goods.addAndEdit.skus._skusShow();
         goods.edit.getCategoryInfo();
         //保存
         $("#btnConfirm_edit").on('click', function () {
@@ -104,7 +104,7 @@ goods.edit = {
             return false;
         }
         if (!goods.addAndEdit._outteridPass) {
-            layer.alert('商品编码有重复，请重新输入后提交！');
+            layer.alert('商品编码有重复，请重新输入后提交1！');
             return false;
         }
         var checkSku = goods.addAndEdit.commit.checkSkuRepeat();
@@ -138,7 +138,7 @@ goods.edit = {
             return false;
         }
         if (!goods.addAndEdit._outteridPass) {
-            layer.alert('商品编码有重复，请重新输入后提交！');
+            layer.alert('商品编码有重复，请重新输入后提交2！');
             return false;
         }
         var url = '/goods/audit/' + goods.edit._curGroupId;
@@ -154,7 +154,7 @@ goods.edit = {
             return false;
         }
         if (!goods.addAndEdit._outteridPass) {
-            layer.alert('商品编码有重复，请重新输入后提交！');
+            layer.alert('商品编码有重复，请重新输入后提交3！');
             return false;
         }
         var checkSku = goods.addAndEdit.commit.checkSkuRepeat();
@@ -236,16 +236,18 @@ goods.add = {
      */
     commitSave: function () {
         if (!goods.addAndEdit._outteridPass) {
-            layer.alert('商品编码有重复，请重新输入后提交！');
+            layer.alert('商品编码有重复，请重新输入后提交4！');
             return false;
         }
-        if (!goods.addAndEdit._merchantCheck) {
-            layer.alert(goods.addAndEdit._merchantCheckStr);
-            return false;
-        }
-        var checkSku = goods.addAndEdit.commit.checkSkuRepeat();
-        if (checkSku) return;
+        //没有商家
+        //if (!goods.addAndEdit._merchantCheck) {
+        //    layer.alert(goods.addAndEdit._merchantCheckStr);
+        //    return false;
+        //}
+        //var checkSku = goods.addAndEdit.commit.checkSkuRepeat();
+        //if (checkSku) return;
         var info = goods.addAndEdit.commit.commitInfo();
+        console.log(JSON.stringify(info));
         var url = '';
         if (info) {
             if (goods.add._saveGroupId) {
@@ -410,12 +412,13 @@ goods.addAndEdit = {
         }
     },
     _checkOuterSuc: function (data) {
+        /*goods.addAndEdit._outteridPass = true; 
         if (data.code != 200) {
             layer.alert(data.msg);
             goods.addAndEdit._outteridPass = false;
         } else {
             goods.addAndEdit._outteridPass = true;
-        }
+        }*/
     },
 
     /**
@@ -431,7 +434,7 @@ goods.addAndEdit = {
         }
     },
     //适用人群
-    tag: [{value: 0, text: "无性别区分"}, {value: 1, text: "男童"}, {value: 2, text: "女童"}],
+    tag: [{value: 0, text: "不推荐"}, {value: 1, text: "半屏推荐"}, {value: 2, text: "全屏推荐"}],
     /**
      *适用人群展示
      */
@@ -899,7 +902,7 @@ goods.addAndEdit = {
                 return false;
             }
             if (!goods.addAndEdit._outteridPass) {
-                layer.alert('商品编码有重复，请重新输入后提交！');
+                layer.alert('商品编码有重复，请重新输入后提交5！');
                 return false;
             }
             var goodsGroup = {};
@@ -921,7 +924,7 @@ goods.addAndEdit = {
             goodsGroup.express_fee = $("#expressFeeInput").val();
             //处理sku 信息
             goodsGroup.sku = goods.addAndEdit.commit.dealSku(goodsGroup.outerId);
-            if (goodsGroup.sku.length < 1) {
+            /*if (goodsGroup.sku.length < 1) {
                 layer.alert("请设定商品规则。");
                 return false;
             }
@@ -940,7 +943,7 @@ goods.addAndEdit = {
                 layer.alert('选择的尺码有未填写具体内容项，请检查后再重新提交');
                 goods.addAndEdit.skus._sizeList({checked: true, size: ""}).update({checked: false});
                 return false;
-            }
+            }*/
 
             //处理图片顺序
             var imgPaths = goods.addAndEdit.commit.getImgList();
@@ -969,6 +972,7 @@ goods.addAndEdit = {
          * @returns {Array}
          */
         dealSku: function (outerId) {
+            return [];
             var data = goods.addAndEdit._skudb().get();
             var len = goods.addAndEdit._skudb().count();
             var sku_list = [];
@@ -994,6 +998,7 @@ goods.addAndEdit = {
          * 检查sku 是否有重复
          */
         checkSkuRepeat: function () {
+            return false;
             var data = goods.addAndEdit._skudb().get();
             var count = goods.addAndEdit._skudb().count();
             var repeat = false;
@@ -1024,8 +1029,13 @@ goods.addAndEdit = {
                 var imgSrc = that.children('img').attr('src');
                 imgdb.insert({top: divObj.top, left: divObj.left, src: imgSrc});
             });
-            if (count < 1) {
-                layer.alert("请上传商品图片。");
+            var tag = parseInt($('#targetPerson input[name="optionsRadios_sex"]:checked ').val());
+            var minImgNum = 1;
+            if(tag>0){
+                minImgNum = 2;
+            }
+            if (count < minImgNum) {
+                layer.alert("请上传足够数量的商品图片。");
                 return false;
             }
             //正序排序

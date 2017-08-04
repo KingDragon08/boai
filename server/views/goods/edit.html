@@ -65,11 +65,8 @@
     }
 </style>
 <script type="text/javascript">
-    var skuListObj='<%-skuListStr%>';
-    var colorList ='<%=color%>';
-    var sizeList ='<%=size%>';
+    
     var pageType = 'edit';
-    skuListObj= JSON.parse(skuListObj);
 
 </script>
 
@@ -114,16 +111,7 @@
 
                                                 </div>
                                             </div>
-                                            <%if(groupInfo.AuditOpinion){%>
-                                            <div class="control-group">
-                                                <label class="control-label" style="color: red">审核不通过原因</label>
-
-                                                <div class="controls">
-                                                    <label style="line-height: 32px;"><%=groupInfo.AuditOpinion%></label>
-                                                </div>
-                                            </div>
-                                            <%}%>
-
+                                            
                                             <div class="control-group">
                                                 <div style="float: right;"> <button id="btnMainPre" type="button" class="black btn">移动端详情预览</button></div>
 
