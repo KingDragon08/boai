@@ -395,7 +395,8 @@ function deleteGoodsGroup(req, res) {
     Sync(function () {
         try {
             var goodsGroupId = req.body.goodsGroupId;
-            var sql = 'UPDATE bbx_goodsgroup SET IsDelete=1 WHERE Id=?';
+            //var sql = 'UPDATE bbx_goodsgroup SET IsDelete=1 WHERE Id=?';
+            var sql = 'delete from bbx_goods where Id=?';
             mysql_db.query.sync(mysql_db, sql, [goodsGroupId]);
             res.json({code: 200, msg: "删除成功"});
         } catch (err) {
