@@ -339,6 +339,11 @@ function getGroupInfo() {
     if (!skuResult) {
         return false;
     }*/
+    if(parseInt(goodsGroup.category)<1){
+        layer.alert("请选择商品类型。");
+        return false;
+    }
+
 
     var imgPaths = [];
     $("#thumbContainer img").each(function (i, img) {
