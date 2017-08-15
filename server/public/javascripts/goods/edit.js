@@ -6,7 +6,7 @@ window.goods = window.goods || {};
 $(function () {
     goods.addAndEdit.init();
     //初始化表格控件
-
+    console.log(pageType);
     if (pageType == "edit") {
         goods.edit.init();
     } else {

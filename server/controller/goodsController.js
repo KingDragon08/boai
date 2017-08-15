@@ -670,9 +670,9 @@ function getEditGoodsInfo(req, res) {
 function getMainTableInfo(goodsGroupId) {
     //从主表中获取数据
     try {
-        var sql = 'SELECT * from bbx_goodsgroup  WHERE Id=? ;';
+        var sql = 'SELECT * from bbx_goods  WHERE Id=? ;';
         var groupInfo = mysql_db.query.sync(mysql_db, sql, [goodsGroupId])[0][0];
-        groupInfo.StateInfo = AppConfig.GOODS_AUDIT_STATE[groupInfo.State];
+        // groupInfo.StateInfo = AppConfig.GOODS_AUDIT_STATE[groupInfo.State];
         var sql2 = 'SELECT * from bbx_goods  WHERE GoodsGroupId=?;';
         var skuList = mysql_db.query.sync(mysql_db, sql2, [goodsGroupId])[0];
         var len = skuList.length;
@@ -783,10 +783,18 @@ function editGoodsCountView(req, res) {
  */
 function detailInfo(goodsGroupId, last_result) {
     try {
-        var sql = 'SELECT * from bbx_view_goods_list WHERE GoodsGroupId=?';
+        // var sql = 'SELECT * from bbx_view_goods_list WHERE GoodsGroupId=?';
+        var sql = 'SELECT a.*,b.CategoryTitle from bbx_goods a left join bbx_goodscategory'+
+                    ' b on a.goodsType=b.Id where a.Id=?'
         var result = mysql_db.query.sync(mysql_db, sql, [goodsGroupId])[0];
         var sql2 = 'SELECT GoodsImgPath from bbx_goodsimages WHERE GoodsId=?';
         var imgsPath = mysql_db.query.sync(mysql_db, sql2, [goodsGroupId])[0];
+        if(result.isRec==1){
+            imgsPath.unshift(result.recHalf);
+        }
+        if(result.isRec==2){
+            imgsPath.unshift(result.recFull);
+        }
         last_result.result = result;
         last_result.imgsPath = imgsPath || [];
         return last_result

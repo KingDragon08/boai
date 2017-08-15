@@ -212,16 +212,8 @@
                     </i></span>
 
                     <br/>
-                    <!--[% if(list[i].brand['BrandState'] == 3) {%]
-                    <a href="/goods/edit?goodsGroupId=[%=list[i].Id%]" data-id="[%=list[i].Id%]" class="btn mini purple btnEditGroup"><i class="icon-edit"></i>
-                    编辑</a>
-                    [%}else{%]
-                    <a class="btn mini purple" onclick="return goods.list.alertCannotEdit('[%=list[i].brand['BrandTitle']%]')"><i class="icon-edit"></i> 编辑</a>
-                    [%}%]-->
-                    <!-- <a href="/goods/edit?goodsGroupId=[%=list[i].Id%]" data-id="[%=list[i].Id%]" class="btn mini purple btnEditGroup"><i class="icon-edit"></i> -->
-
-                    <!-- <a href="/goods/editGoodsCount?goodsGroupId=[%=list[i].Id%]" data-id="[%=list[i].Id%]"
-                       class="btn mini black btnEditGroup"><i class="icon-edit"></i> 编辑库存</a> -->
+                    <!-- <a href="/goods/edit?goodsGroupId=[%=list[i].Id%]" data-id="[%=list[i].Id%]" class="btn mini purple btnEditGroup"><i class="icon-edit"></i>
+                    编辑</a> -->
                     <a style="cursor: pointer" onclick="goods.list.deleteGoodGroup('[%=list[i].Id%]')"
                        class="btn mini black btnEditGroup"><i class="icon-trash"></i> 删除</a>
                 </div>

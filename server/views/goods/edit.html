@@ -113,12 +113,11 @@
                                             </div>
                                             
                                             <div class="control-group">
-                                                <div style="float: right;"> <button id="btnMainPre" type="button" class="black btn">移动端详情预览</button></div>
-
+                                                
                                                 <label class="control-label">商品分类</label>
 
                                                 <div id="categoryDiv" class="controls">
-                                                    <select id="categorySelect" curid="<%=groupInfo.CategoryId%>" class="large m-wrap" tabindex="1">
+                                                    <select id="categorySelect" curid="<%=groupInfo.goodsType%>" class="large m-wrap" tabindex="1">
 
                                                     </select>
                                                 </div>
@@ -131,19 +130,7 @@
                                                 <div class="controls">
                                                     <input id="goodsGroupTitleInput_edit" type="text" required="true"
                                                            placeholder="18个字以内，不能重复" class="m-wrap large"
-                                                            value="<%=groupInfo.GoodsGroupTitle%>"/>
-                                                    <span class="help-inline"
-                                                          style="display: none;color: red">*此项为必填项</span>
-                                                </div>
-                                            </div>
-
-                                            <div class="control-group">
-                                                <label class="control-label">商品编码</label>
-
-                                                <div class="controls">
-                                                    <input id="outerIdInput_edit" curid="<%=groupInfo.Outeriid%>" type="text" required="true"
-                                                           placeholder="字母+数字，同一品牌下不能重复"
-                                                           class="m-wrap large" value="<%=groupInfo.Outeriid%>"/>
+                                                            value="<%=groupInfo.GoodsTitle%>"/>
                                                     <span class="help-inline"
                                                           style="display: none;color: red">*此项为必填项</span>
                                                 </div>
@@ -151,7 +138,7 @@
 
 
                                             <div class="control-group">
-                                                <label class="control-label">商品吊牌价</label>
+                                                <label class="control-label">商品价格</label>
 
                                                 <div class="controls">
                                                     <input id="priceInput_edit" type="text" required="true"
@@ -162,53 +149,23 @@
                                                 </div>
                                             </div>
                                             <div class="control-group">
-                                                <label class="control-label">适用人群</label>
+                                                <label class="control-label">是否推荐</label>
 
-                                                <div class="controls" id="targetPerson" curid="<%=groupInfo.Tag%>">
-
+                                                <div class="controls" id="targetPerson" curid="<%=groupInfo.isRec%>">
+                                                     <label class="radio"><input type="radio" name="optionsRadios_sex" value="0" <%=groupInfo.isRec==0?'checked':''%>/>不推荐</label>&nbsp;&nbsp;
+                                                        <label class="radio"><input type="radio" name="optionsRadios_sex" value="1" <%=groupInfo.isRec==1?'checked':''%>/>半屏推荐</label>&nbsp;&nbsp;
+                                                        <label class="radio"><input type="radio" name="optionsRadios_sex" value="2" <%=groupInfo.isRec==2?'checked':''%>/>全屏推荐</label>
                                                 </div>
                                             </div>
 
-                                            <div class="control-group">
+                                            <div class="control-group" style="display: none;">
                                                 <label class="control-label">发布</label>
-                                                <div class="controls" id="publishState" curid="0">
+                                                <div class="controls" id="publishState" curid="1">
                                                     <label class="radio"><input type="radio" name="saleState" value="0" checked/>否</label>
                                                     <label class="radio"><input type="radio" name="saleState" value="1"/>是</label>
                                                 </div>
                                             </div>
-                                            <div class="control-group">
-                                                <label class="control-label">商品规则（颜色）</label>
-
-                                                <div id="category_color" class="controls">
-                                                <%for(var i=0;i<color.length;i++){%>
-                                                    <label class="checkbox"><input class="colorCheck" values="<%=color[i]%>" type="checkbox" checked="checked"/>
-                                                        <span style="display: inline-block;background-color: rgba(0,0,0,0);margin-top: 3px;width: 16px;height: 16px;position: absolute;"></span>
-                                                        <input type="text" class="ruleInput colorInput" oldvalue="<%=color[i]%>" value="<%=color[i]%>" onblur="goods.addAndEdit.skus.changeColor(this)"></label>
-                                                <%}%>
-                                                    <button type="button" class="btn btn-default btnAddConfig" id="btnAddColor"><i class="icon-plus"></i></button>
-                                                </div>
-
-                                            </div>
-                                            <div class="control-group">
-                                                <label class="control-label">商品规则（尺码）</label>
-
-                                                <div id="category_size" class="controls">
-                                                    <%for(var j=0;j<size.length;j++){%>
-                                                    <label class="checkbox"><input class="sizeCheck" type="checkbox" values="<%=size[j]%>" checked="checked"/>
-                                                        <input type="text" class="ruleInput" oldValue="<%=size[j]%>" value="<%=size[j]%>" onblur="goods.addAndEdit.skus.changeSize(this)"></label>
-                                                    <%}%>
-                                                    <button type="button" class="btn btn-default btnAddConfig" id="btnAddSize"><i class="icon-plus"></i></button>
-                                                </div>
-                                            </div>
-
-                                            <div class="control-group">
-                                                <label class="control-label">子商品</label>
-
-                                                <div class="controls" id="childrenGoods">
-                                                    <div id="infoContainer" style="max-height: 500px;overflow: auto;margin-top: 15px;">
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            
 
                                             <div class="control-group">
                                                 <label class="control-label">商品图片</label>
@@ -240,7 +197,7 @@
                                                         </span>
                                                         </form>
             <span class="help-inline"
-                  style="color: red">&nbsp 1.点击选中商品图片作为商品展示封面 &nbsp&nbsp 2.商品图片应小于200kb，大于50kb</span>
+                  style="color: red">&nbsp 1.第一张为推荐图（若勾选推荐），第一张为封面图（若不勾选推荐） &nbsp&nbsp 2.商品图片应小于200kb，大于50kb</span>
                                                     </div>
                                                 </div>
                                             </div>

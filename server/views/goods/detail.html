@@ -1,5 +1,63 @@
 <%- include('../header.html')%>
+<link href="../stylesheets/font-awesome.min.css" rel="stylesheet"/>
+<link href="../template/assets/glyphicons/css/glyphicons.css" rel="stylesheet"/>
+<link href="../stylesheets/summernote.css" rel="stylesheet"/>
+<link href="../stylesheets/select2.css" rel="stylesheet"/>
+
 <style>
+    .ruleInput {
+        padding: 0 !important;
+        width: 80px;
+        border: 0 !important;
+    }
+
+    .colorInput {
+        margin-left: 20px;
+    }
+
+    .img_thumbnailDiv {
+        display: inline-block;
+    }
+
+    .img_thumbnail {
+        width: 150px;
+        padding: 5px;
+        border: 1px solid #e5e5e5
+    }
+
+    #inputFile_groupImg {
+        line-height: 25px;
+        opacity: 0;
+        margin-left: -160px;
+        cursor: pointer;
+    }
+
+    .deleteThumb {
+        position: relative;
+        left: 0px;
+        top: -70px;
+        padding: 0px 3px;
+    }
+
+    #detailEditor_edit .btn-group {
+        margin: 5px 5px 5px 0 !important;
+    }
+
+    .checkbox>input[type="checkbox"] {
+        margin-left: 0;
+    }
+
+    .radio>input[type="radio"]{
+        margin-left: 0;
+    }
+
+    .bordered{
+        border: solid #ff0000 3px;
+    }
+
+    .btnAddConfig{
+        padding: 0 5px;
+    }
     .downloadFile {
         position: relative;
         left: -21px;
@@ -66,33 +124,17 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="control-group">
-                                                    <label class="control-label">所属品牌</label>
-
-                                                    <div class="controls">
-                                                        <input id="brandInput" type="text" value="<%=result[0].BrandTitle%>"
-                                                               class="infoInput m-wrap large" disabled="disabled"/>
-                                                    </div>
-                                                </div>
 
                                                 <div class="control-group">
                                                     <label class="control-label">商品名称</label>
 
                                                     <div class="controls">
-                                                        <input id="goodsGroupTitleInput" type="text" value="<%=result[0].GoodsGroupTitle%>"
+                                                        <input id="goodsGroupTitleInput" type="text" value="<%=result[0].GoodsTitle%>"
                                                                class="infoInput m-wrap large" disabled="disabled"/>
                                                     </div>
                                                 </div>
                                                 <div class="control-group">
-                                                    <label class="control-label">商品编码</label>
-
-                                                    <div class="controls">
-                                                        <input id="outerIdInput" type="text" value="<%=result[0].Outeriid%>"
-                                                               class="infoInput m-wrap large" disabled="disabled"/>
-                                                    </div>
-                                                </div>
-                                                <div class="control-group">
-                                                    <label class="control-label">商品吊牌价</label>
+                                                    <label class="control-label">商品价格</label>
 
                                                     <div class="controls">
                                                         <input id="priceInput" type="text" value="<%=result[0].GoodsPrice%>"
@@ -101,28 +143,11 @@
                                                 </div>
 
                                                 <div class="control-group">
-                                                    <label class="control-label" style="color: #ff0000">子商品：</label>
-
-                                                    <div class="controls">
-                                                        <table class="table table-striped table-bordered table-advance table-hover">
-                                                            <thead>
-                                                            <tr>
-                                                                <th> 型号</th>
-                                                                <th> sku</th>
-                                                                <th> 售价</th>
-                                                            </tr>
-                                                            </thead>
-                                                            <tbody id="listTBody_childGoods">
-                                                            <%for(var i=0;i<result.length;i++){%>
-                                                            <tr>
-                                                                <td><%=result[i].FilterConfig%></td>
-                                                                <td><%=result[i].Skuid%></td>
-                                                                <td><%=result[i].GoodsSupplyPrice%></td>
-                                                            </tr>
-                                                            <%}%>
-
-                                                            </tbody>
-                                                        </table>
+                                                    <label class="control-label">是否推荐</label>
+                                                    <div class="controls" id="targetPerson" curid="0" style="margin-left: 200px;">
+                                                        <label class="radio"><input type="radio" name="optionsRadios_sex" value="0" <%=result[0].isRec==0?'checked':''%>/>不推荐</label>&nbsp;&nbsp;
+                                                        <label class="radio"><input type="radio" name="optionsRadios_sex" value="1" <%=result[0].isRec==1?'checked':''%>/>半屏推荐</label>&nbsp;&nbsp;
+                                                        <label class="radio"><input type="radio" name="optionsRadios_sex" value="2" <%=result[0].isRec==2?'checked':''%>/>全屏推荐</label>
                                                     </div>
                                                 </div>
 
@@ -146,9 +171,9 @@
                                                 <div class="control-group">
                                                     <label class="control-label">商品详情</label>
 
-                                                    <div class="controls" id="detailEditor">
-                                                        <div id="summernote">
-                                                            <%-result[0].GoodsDetail%>
+                                                    <div class="controls" id="detailEditor_edit">
+                                                        <div id="summernote_edit">
+                                                            <%-result[0].goodsDesc%>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -170,10 +195,16 @@
 </div>
 </div>
 <%- include('../footer.html')%>
+<script type="text/javascript" src="../javascripts/utils/summernote.js"></script>
+<script type="text/javascript" src="../javascripts/utils/summernote-zh-CN.js"></script
 <script type="text/javascript" src="../javascripts/utils/common.js"></script>
 <script type="text/javascript" src="../javascripts/utils/layer/layer.js"></script>
 
 <script type="text/javascript">
+    $('#summernote_edit').summernote({
+        height: 500,
+        lang: 'zh-CN'
+    });
     function cancel(){
         window.location.href='/goods/list';
     }
