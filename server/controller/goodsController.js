@@ -630,6 +630,7 @@ function getMainTableInfo(goodsGroupId) {
         }
         var sql3 = 'SELECT GoodsImgPath from bbx_goodsimages WHERE GoodsId=?';
         var imgsPath = mysql_db.query.sync(mysql_db, sql3, [goodsGroupId])[0];
+        imgsPath = imgsPath || [];
         if(groupInfo.isRec==1){
             imgsPath.unshift({"GoodsImgPath":groupInfo.recHalf});
         }
@@ -734,11 +735,12 @@ function detailInfo(goodsGroupId, last_result) {
         var result = mysql_db.query.sync(mysql_db, sql, [goodsGroupId])[0];
         var sql2 = 'SELECT GoodsImgPath from bbx_goodsimages WHERE GoodsId=?';
         var imgsPath = mysql_db.query.sync(mysql_db, sql2, [goodsGroupId])[0];
-        if(result.isRec==1){
-            imgsPath.unshift(result.recHalf);
+        imgsPath = imgsPath || [];
+        if(result[0].isRec==1){
+            imgsPath.unshift({"GoodsImgPath":result[0].recHalf});
         }
-        if(result.isRec==2){
-            imgsPath.unshift(result.recFull);
+        if(result[0].isRec==2){
+            imgsPath.unshift({"GoodsImgPath":result[0].recFull});
         }
         last_result.result = result;
         last_result.imgsPath = imgsPath || [];
