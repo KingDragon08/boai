@@ -6,7 +6,6 @@ window.goods = window.goods || {};
 $(function () {
     goods.addAndEdit.init();
     //初始化表格控件
-    console.log(pageType);
     if (pageType == "edit") {
         goods.edit.init();
     } else {
@@ -103,12 +102,8 @@ goods.edit = {
             layer.alert(goods.addAndEdit._merchantCheckStr);
             return false;
         }
-        if (!goods.addAndEdit._outteridPass) {
-            layer.alert('商品编码有重复，请重新输入后提交1！');
-            return false;
-        }
         var checkSku = goods.addAndEdit.commit.checkSkuRepeat();
-        if (checkSku) return;
+        //if (checkSku) return;
         var info = goods.addAndEdit.commit.commitInfo();
         if (info) {
             info.State = 2;
@@ -124,7 +119,10 @@ goods.edit = {
     _saveAndCommitSuc: function (data) {
         console.log(data);
         if (data.code == 200) {
-            layer.alert(data.data);
+            // layer.alert(data.data);
+            layer.alert(data.data,function(){
+                    window.location.href ='/goods/list';
+                });
         } else {
             layer.alert(data.data);
         }
@@ -631,13 +629,15 @@ goods.addAndEdit = {
                 }
 
             } else {
-                var _colorList = colorList.split(',');
+                // var _colorList = colorList.split(',');
+                var _colorList = [];
                 var len_color = _colorList.length;
                 for (var i = 0; i < len_color; i++) {
                     var _color = new Color(_colorList[i], true);
                     goods.addAndEdit.skus._colorList.insert(_color);
                 }
-                var _sizeList = sizeList.split(',');
+                // var _sizeList = sizeList.split(',');
+                var _sizeList = [];
                 var len_size = _sizeList.length;
                 for (var j = 0; j < len_size; j++) {
                     var _size = new Size(_sizeList[j], true);
@@ -650,6 +650,7 @@ goods.addAndEdit = {
             if (pageType == "edit") {
                 changeFlag = false;
             }
+            skuListObj = [];
             for (var i = 0; i < skuListObj.length; i++) {
                 var sku = new Sku(skuListObj[i].color, skuListObj[i].size, skuListObj[i].Id, skuListObj[i].Skuid,
                     skuListObj[i].GoodsSupplyPrice, skuListObj[i].MaxCount, skuListObj[i].GoodsSalePrice, changeFlag);

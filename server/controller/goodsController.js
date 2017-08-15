@@ -262,110 +262,48 @@ function editGoodsGroup(req, res) {
         mysql_db.beginTransaction.sync(mysql_db);
         try {
             var groupId = group.id;
-
-            //更新商品组
-            mysql_db.query.sync(
-                mysql_db,
-                'UPDATE bbx_goodsgroup SET GoodsGroupTitle=?,GoodsGroupSubTitle=?,GoodsDetail=?,GoodsImgPath=?,GoodsPrice=?,' +
-                'CategoryId=?,Outeriid=?,Tag=?,State=?,UpdateTime=now(),GoodsSaleState=?  WHERE Id=?',
-                [group.goodsGroupTitle, group.goodsGroupTitle, group.goodsDetail, group.imgPaths[0],
-                    group.price, group.category.Id,  group.outerId, group.tag, group.State,group.saleState, groupId]
-            );
-
-            //获取商品的库存信息
-            var sku_quantity_db = new taffy.taffy();
-            var sql2 = 'SELECT Id,SkuId,MaxCount FROM bbx_goods WHERE GoodsGroupId =?;';
-            var quantitys = mysql_db.query.sync(mysql_db, sql2, [groupId])[0];
-            try {
-                for (var i = 0; i < quantitys.length; i++) {
-                    sku_quantity_db.insert({
-                        id: quantitys[i].Id,
-                        quantity: quantitys[i].MaxCount,
-                        SkuId: quantitys[i].SkuId
-                    });
-                }
-            } catch (e) {
-                console.log(e);
-            }
-
-            //更新子商品，先删除，后增加
-            mysql_db.query.sync(mysql_db, 'DELETE FROM bbx_goods WHERE GoodsGroupId=?', [groupId]);
-            var publish_goodsId = '';
-            for (var i = 0; i < group.sku.length; i++) {
-                var goodsId;
-                var quantity = group.sku[i].quantity;
-                var skuId = group.sku[i].sku_id;
-
-                if (group.sku[i].id) {
-                    goodsId = group.sku[i].id;
-                    try {
-                        quantity = sku_quantity_db({id: goodsId}).get()[0].quantity;
-                    } catch (e) {
-                        console.log(e);
-                    }
-                } else {
-                    goodsId = uuid.v1().replace(/-/ig, "");
-                }
-
-                publish_goodsId = goodsId;
-                var goodsCostPrice = group.sku[i].sell_price;
-                //供货价
-                var supplyPrice = group.sku[i].supply_price;
-                var outerId = group.sku[i].outer_id || group.outerId;
-
-                var filterConfig = group.sku[i].title;
-                var childTitle = group.goodsGroupTitle + " " + filterConfig;
-
-                //在已有的库存上加上20% 取整
-                var count = Math.ceil(quantity * 1.2);
+            var isRec = parseInt(group.tag);
+            if(isRec==0){
                 mysql_db.query.sync(
                     mysql_db,
-                    'insert into bbx_goods ' +
-                    '(`Id`,`GoodsTitle`,`GoodsShortTitle`,`GoodsPrice`,`GoodsCostPrice`,`CreateTime`,`Outeriid`,`Skuid`,' +
-                    '`GoodsGroupId`,`FilterConfig`,`MaxCount`,`OriginalCount`,`GoodsSalePrice`,`LimitCount`,GoodsSupplyPrice)' +
-                    'values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
-                    [goodsId, childTitle, childTitle,
-                        group.price, goodsCostPrice, new Date(),
-                        outerId, skuId, groupId, filterConfig, quantity, count, goodsCostPrice, 0, supplyPrice]
-                );
+                    'UPDATE bbx_goods SET GoodsTitle=?,GoodsShortTitle=?,'+
+                    'goodsDesc=?,GoodsImgPath=?,GoodsPrice=?,' +
+                    'goodsType=?,GoodsSaleState=?,isRec=?,recHalf=?,recFull=? WHERE Id=?',
+                    [group.goodsGroupTitle, group.goodsGroupTitle, group.goodsDetail,
+                     group.imgPaths[0], group.price, group.category.Id,  
+                     group.saleState,isRec,'','',groupId]
+                );    
             }
-
-            //更新bbx_goods4filterconfig，先删除，后增加
-            var deleteConfigSql = 'DELETE  FROM bbx_goods4filterconfig WHERE GoodsGroupId=?';
-            mysql_db.query.sync(mysql_db, deleteConfigSql, [groupId]);
-
-            //插入bbx_goods4filterconfig
-            var sizeFilterId = uuid.v1().replace(/-/ig, "") + "";
-            var sizeFilter = "";
-            for (var i = 0; i < group.customConfig.sizes.length; i++) {
-                if (group.customConfig.sizes[i].checked) {
-                    sizeFilter = sizeFilter + "," + group.customConfig.sizes[i].size;
-                }
+            if(isRec==1){
+                mysql_db.query.sync(
+                    mysql_db,
+                    'UPDATE bbx_goods SET GoodsTitle=?,GoodsShortTitle=?,'+
+                    'goodsDesc=?,GoodsImgPath=?,GoodsPrice=?,' +
+                    'goodsType=?,GoodsSaleState=?,isRec=?,recHalf=?,recFull=? WHERE Id=?',
+                    [group.goodsGroupTitle, group.goodsGroupTitle, group.goodsDetail,
+                     group.imgPaths[1], group.price, group.category.Id,  
+                     group.saleState,isRec,group.imgPaths[0],'',groupId]
+                );   
             }
-            sizeFilter = sizeFilter.replace(",", "");
-            mysql_db.query.sync(
-                mysql_db,
-                'insert into bbx_goods4filterconfig values(?,?,?,?,?,?)',
-                [sizeFilterId, "", "尺码", sizeFilter, groupId, 2]
-            );
-
-            var colorFilterId = uuid.v1().replace(/-/ig, "") + "";
-            var colorFilter = "";
-            for (var i = 0; i < group.customConfig.colors.length; i++) {
-                if (group.customConfig.colors[i].checked) {
-                    colorFilter = colorFilter + "," + group.customConfig.colors[i].color;
-                }
+            if(isRec==2){
+                mysql_db.query.sync(
+                    mysql_db,
+                    'UPDATE bbx_goods SET GoodsTitle=?,GoodsShortTitle=?,'+
+                    'goodsDesc=?,GoodsImgPath=?,GoodsPrice=?,' +
+                    'goodsType=?,GoodsSaleState=?,isRec=?,recHalf=?,recFull=? WHERE Id=?',
+                    [group.goodsGroupTitle, group.goodsGroupTitle, group.goodsDetail,
+                     group.imgPaths[1], group.price, group.category.Id,  
+                     group.saleState,isRec,'',group.imgPaths[0],groupId]
+                );   
             }
-            colorFilter = colorFilter.replace(",", "");
-            mysql_db.query.sync(
-                mysql_db,
-                'insert into bbx_goods4filterconfig values(?,?,?,?,?,?)',
-                [colorFilterId, "", "颜色", colorFilter, groupId, 1]
-            );
-
+            
             //更新bbx_goodsimages，先删除，后增加
             mysql_db.query.sync(mysql_db, 'DELETE FROM bbx_goodsimages WHERE GoodsId=?', [groupId]);
-            for (var i = 0; i < group.imgPaths.length; i++) {
+            var start = 0;
+            if(isRec>0){
+                start = 1;
+            }
+            for (var i = start; i < group.imgPaths.length; i++) {
                 var imgId = uuid.v1().replace(/-/ig, "") + "";
                 mysql_db.query.sync(
                     mysql_db,
@@ -672,6 +610,7 @@ function getMainTableInfo(goodsGroupId) {
     try {
         var sql = 'SELECT * from bbx_goods  WHERE Id=? ;';
         var groupInfo = mysql_db.query.sync(mysql_db, sql, [goodsGroupId])[0][0];
+        console.log(groupInfo);
         // groupInfo.StateInfo = AppConfig.GOODS_AUDIT_STATE[groupInfo.State];
         var sql2 = 'SELECT * from bbx_goods  WHERE GoodsGroupId=?;';
         var skuList = mysql_db.query.sync(mysql_db, sql2, [goodsGroupId])[0];
@@ -691,6 +630,12 @@ function getMainTableInfo(goodsGroupId) {
         }
         var sql3 = 'SELECT GoodsImgPath from bbx_goodsimages WHERE GoodsId=?';
         var imgsPath = mysql_db.query.sync(mysql_db, sql3, [goodsGroupId])[0];
+        if(groupInfo.isRec==1){
+            imgsPath.unshift({"GoodsImgPath":groupInfo.recHalf});
+        }
+        if(groupInfo.isRec==2){
+            imgsPath.unshift({"GoodsImgPath":groupInfo.recFull});
+        }
         var last_result = {
             groupInfo: groupInfo,
             skuList: skuList,

@@ -158,9 +158,9 @@
                                                 </div>
                                             </div>
 
-                                            <div class="control-group" style="display: none;">
+                                            <div class="control-group">
                                                 <label class="control-label">发布</label>
-                                                <div class="controls" id="publishState" curid="1">
+                                                <div class="controls" id="publishState" curid="<%=groupInfo.GoodsSaleState%>">
                                                     <label class="radio"><input type="radio" name="saleState" value="0" checked/>否</label>
                                                     <label class="radio"><input type="radio" name="saleState" value="1"/>是</label>
                                                 </div>
@@ -207,7 +207,7 @@
 
                                                 <div class="controls" id="detailEditor_edit">
                                                     <div id="summernote_edit">
-                                                        <%-groupInfo.GoodsDetail%>
+                                                        <%-groupInfo.goodsDesc%>
                                                     </div>
                                                 </div>
                                             </div>
