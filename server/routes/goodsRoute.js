@@ -69,6 +69,11 @@ router.post('/goods/category', function (req, res) {
     goodsController.getGoodsCategory(req, res);
 });
 
+//查询商品二级分类接口
+router.post('/goods/category2', function (req, res) {
+    goodsController.getGoodsCategory2(req, res);
+});
+
 //检查商品编码是否重复
 router.post('/goods/checkOuteriid', function (req, res) {
     goodsController.checkOuteriid(req, res);

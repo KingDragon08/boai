@@ -70,6 +70,33 @@ goods.edit = {
                 }
             }
             $("#categorySelect").html(arr_html.join(''));
+            //初始化二级分类
+            var url = '/goods/category2';
+            var kd_info = {categoryId: curId};
+            common.ajax(url, kd_info, goods.edit._getCategorySuc2, goods.edit._error);
+
+            $("#categorySelect").on("change", function () {
+                var categoryId = $("#categorySelect").find("option:selected").val();
+                var kd_info = {categoryId:categoryId};
+                common.ajax(url, kd_info, goods.edit._getCategorySuc2, goods.edit._error);                                
+            });
+        }
+    },
+    _getCategorySuc2: function(data){
+        if(data.code==200){
+            var categoryArr = data.data;
+            var curId = $("#categorySelect2").attr('curId');
+            var arr_html = [];
+            for (var i = 0; i < categoryArr.length; i++) {
+                if (categoryArr[i].Id == 'd37c79275b404124b01efa2ac840b345') {
+                    arr_html.push('<option disabled="disabled">-----' + categoryArr[i].categoryName + '-----</option>');
+                } else if (categoryArr[i].Id == curId) {
+                    arr_html.push('<option class="categoryOption" selected="selected"  value="' + categoryArr[i].Id + '">' + categoryArr[i].categoryName + '</option>');
+                } else {
+                    arr_html.push('<option class="categoryOption"  value="' + categoryArr[i].Id + '">' + categoryArr[i].categoryName + '</option>');
+                }
+            }
+            $("#categorySelect2").html(arr_html.join(''));
         }
     },
     _error: function () {
@@ -223,6 +250,33 @@ goods.add = {
                 }
             }
             $("#categorySelect").html(arr_html.join(''));
+            //初始化二级分类
+            var url = '/goods/category2';
+            var kd_info = {categoryId: 1};
+            common.ajax(url, kd_info, goods.add._getCategorySuc2, goods.add._error);
+
+            $("#categorySelect").on("change", function () {
+                var categoryId = $("#categorySelect").find("option:selected").val();
+                var kd_info = {categoryId:categoryId};
+                common.ajax(url, kd_info, goods.add._getCategorySuc2, goods.add._error);                                
+            });
+        }
+    },
+    _getCategorySuc2: function(data){
+        if(data.code==200){
+            var categoryArr = data.data;
+            var curId = 'd37c79275b404124b01efa2ac840b345';
+            var arr_html = [];
+            for (var i = 0; i < categoryArr.length; i++) {
+                if (categoryArr[i].Id == 'd37c79275b404124b01efa2ac840b345') {
+                    arr_html.push('<option disabled="disabled">-----' + categoryArr[i].categoryName + '-----</option>');
+                } else if (categoryArr[i].Id == curId) {
+                    arr_html.push('<option class="categoryOption" selected="selected"  value="' + categoryArr[i].Id + '">' + categoryArr[i].categoryName + '</option>');
+                } else {
+                    arr_html.push('<option class="categoryOption"  value="' + categoryArr[i].Id + '">' + categoryArr[i].categoryName + '</option>');
+                }
+            }
+            $("#categorySelect2").html(arr_html.join(''));
         }
     },
     _error: function () {
@@ -913,6 +967,7 @@ goods.addAndEdit = {
             }
             goodsGroup.category = {};
             goodsGroup.category.Id = $("#categorySelect").find("option:selected").val();
+            goodsGroup.category.Id2 = $("#categorySelect2").find("option:selected").val();
 
             goodsGroup.goodsGroupTitle = $("#goodsGroupTitleInput_edit").val();
             goodsGroup.outerId = $("#outerIdInput_edit").val();

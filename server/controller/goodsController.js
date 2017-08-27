@@ -45,6 +45,35 @@ function getGoodsCategory(req, res) {
     });
 }
 
+
+/**
+ * 获取商品二级分类
+ * @param req
+ * @param res
+ */
+function getGoodsCategory2(req, res) {
+
+    Sync(function () {
+        try {
+            var sql;
+            var categoryId = req.body.categoryId;
+            sql = "select * from bbx_goodscategory_2 where parentId=" + categoryId;
+            var result = mysql_db.query.sync(mysql_db, sql)[0];
+            var list = [];
+            for (var i = 0; i < result.length; i++) {
+                list.push({
+                    Id: result[i].id,
+                    categoryName: result[i].name
+                });
+            }
+            res.json({"code": 200, "data": list});
+        } catch (e) {
+            console.log(e);
+            res.json({"code": 300, "data": "error"});
+        }
+    });
+}
+
 /**
  * 获取商品组列表信息
  * @param req
@@ -268,9 +297,9 @@ function editGoodsGroup(req, res) {
                     mysql_db,
                     'UPDATE bbx_goods SET GoodsTitle=?,GoodsShortTitle=?,'+
                     'goodsDesc=?,GoodsImgPath=?,GoodsPrice=?,' +
-                    'goodsType=?,GoodsSaleState=?,isRec=?,recHalf=?,recFull=? WHERE Id=?',
+                    'goodsType=?,goodsType2=?,GoodsSaleState=?,isRec=?,recHalf=?,recFull=? WHERE Id=?',
                     [group.goodsGroupTitle, group.goodsGroupTitle, group.goodsDetail,
-                     group.imgPaths[0], group.price, group.category.Id,  
+                     group.imgPaths[0], group.price, group.category.Id,group.category.Id2,  
                      group.saleState,isRec,'','',groupId]
                 );    
             }
@@ -279,9 +308,9 @@ function editGoodsGroup(req, res) {
                     mysql_db,
                     'UPDATE bbx_goods SET GoodsTitle=?,GoodsShortTitle=?,'+
                     'goodsDesc=?,GoodsImgPath=?,GoodsPrice=?,' +
-                    'goodsType=?,GoodsSaleState=?,isRec=?,recHalf=?,recFull=? WHERE Id=?',
+                    'goodsType=?,goodsType2=?,GoodsSaleState=?,isRec=?,recHalf=?,recFull=? WHERE Id=?',
                     [group.goodsGroupTitle, group.goodsGroupTitle, group.goodsDetail,
-                     group.imgPaths[1], group.price, group.category.Id,  
+                     group.imgPaths[1], group.price, group.category.Id,group.category.Id2,  
                      group.saleState,isRec,group.imgPaths[0],'',groupId]
                 );   
             }
@@ -290,9 +319,9 @@ function editGoodsGroup(req, res) {
                     mysql_db,
                     'UPDATE bbx_goods SET GoodsTitle=?,GoodsShortTitle=?,'+
                     'goodsDesc=?,GoodsImgPath=?,GoodsPrice=?,' +
-                    'goodsType=?,GoodsSaleState=?,isRec=?,recHalf=?,recFull=? WHERE Id=?',
+                    'goodsType=?,goodsType2=?,GoodsSaleState=?,isRec=?,recHalf=?,recFull=? WHERE Id=?',
                     [group.goodsGroupTitle, group.goodsGroupTitle, group.goodsDetail,
-                     group.imgPaths[1], group.price, group.category.Id,  
+                     group.imgPaths[1], group.price, group.category.Id,group.category.Id2,  
                      group.saleState,isRec,'',group.imgPaths[0],groupId]
                 );   
             }
@@ -364,10 +393,10 @@ function _addGoodsGroup(group) {
                 mysql_db,
                 'insert into bbx_goods (Id,GoodsTitle,GoodsShortTitle,goodsDesc,'+
                 'CreateTime,GoodsImgPath,GoodsPrice,' +
-                'goodsType,GoodsSaleState,isRec) values(?,?,?,?,now(),?,?,?,?,?)',
+                'goodsType,goodsType2,GoodsSaleState,isRec) values(?,?,?,?,now(),?,?,?,?,?,?)',
                 [groupId,group.goodsGroupTitle,group.goodsGroupTitle,
                     group.goodsDetail,group.imgPaths[0],
-                    group.price,group.category.Id,group.saleState,isRec]
+                    group.price,group.category.Id,group.category.Id2,group.saleState,isRec]
             );    
         }
         if(isRec==1){
@@ -375,10 +404,10 @@ function _addGoodsGroup(group) {
                 mysql_db,
                 'insert into bbx_goods (Id,GoodsTitle,GoodsShortTitle,goodsDesc,'+
                 'CreateTime,GoodsImgPath,GoodsPrice,' +
-                'goodsType,GoodsSaleState,isRec,recHalf) values(?,?,?,?,now(),?,?,?,?,?,?)',
+                'goodsType,goodsType2,GoodsSaleState,isRec,recHalf) values(?,?,?,?,now(),?,?,?,?,?,?,?)',
                 [groupId,group.goodsGroupTitle,group.goodsGroupTitle,
                     group.goodsDetail,group.imgPaths[1],
-                    group.price,group.category.Id,group.saleState,isRec,group.imgPaths[0]]
+                    group.price,group.category.Id,group.category.Id2,group.saleState,isRec,group.imgPaths[0]]
             );   
         }
         if(isRec==2){
@@ -386,10 +415,10 @@ function _addGoodsGroup(group) {
                 mysql_db,
                 'insert into bbx_goods (Id,GoodsTitle,GoodsShortTitle,goodsDesc,'+
                 'CreateTime,GoodsImgPath,GoodsPrice,' +
-                'goodsType,GoodsSaleState,isRec,recFull) values(?,?,?,?,now(),?,?,?,?,?,?)',
+                'goodsType,goodsType2,GoodsSaleState,isRec,recFull) values(?,?,?,?,now(),?,?,?,?,?,?,?)',
                 [groupId,group.goodsGroupTitle,group.goodsGroupTitle,
                     group.goodsDetail,group.imgPaths[1],
-                    group.price,group.category.Id,group.saleState,isRec,group.imgPaths[0]]
+                    group.price,group.category.Id,group.category.Id2,group.saleState,isRec,group.imgPaths[0]]
             );   
         }
         console.log('insert_result*********');
@@ -730,8 +759,11 @@ function editGoodsCountView(req, res) {
 function detailInfo(goodsGroupId, last_result) {
     try {
         // var sql = 'SELECT * from bbx_view_goods_list WHERE GoodsGroupId=?';
-        var sql = 'SELECT a.*,b.CategoryTitle from bbx_goods a left join bbx_goodscategory'+
-                    ' b on a.goodsType=b.Id where a.Id=?'
+        var sql = 'SELECT a.*,b.CategoryTitle,c.name as CategoryTitle2'+
+                    ' from bbx_goods a'+
+                    ' left join bbx_goodscategory b on a.goodsType=b.Id'+
+                    ' left join bbx_goodscategory_2 c on a.goodsType2=c.id'+
+                    ' where a.Id=?';
         var result = mysql_db.query.sync(mysql_db, sql, [goodsGroupId])[0];
         var sql2 = 'SELECT GoodsImgPath from bbx_goodsimages WHERE GoodsId=?';
         var imgsPath = mysql_db.query.sync(mysql_db, sql2, [goodsGroupId])[0];
@@ -838,6 +870,7 @@ function resetGoodsSaleState(req, res) {
 exports.getGoodsColors = getGoodsColors;
 exports.getGoodsSize = getGoodsSize;
 exports.getGoodsCategory = getGoodsCategory;
+exports.getGoodsCategory2 = getGoodsCategory2;
 exports.getGoodsGroups = getGoodsGroups;
 exports.getGoodsGroupInfo = getGoodsGroupInfo;
 exports.createGoodsGroup = createGoodsGroup;
