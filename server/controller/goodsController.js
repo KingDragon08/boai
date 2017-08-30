@@ -23,21 +23,127 @@ function getGoodsCategory(req, res) {
             var list = [], temp;
             for (var i = 0; i < result.length; i++) {
                 temp = result[i];
-                if (i != 0) {
-                    list.push({
-                        Id: temp.Id,
-                        categoryName: temp.CategoryTitle,
-                        parentId: temp.CategoryPid
-                    });
-                } else {
-                    list.push({
-                        Id: temp.Id,
-                        categoryName: temp.CategoryTitle
-                    });
-                }
+                list.push({
+                    Id: temp.Id,
+                    categoryName: temp.CategoryTitle,
+                    parentId: temp.CategoryPid,
+                    categoryType: temp.CategoryType,
+                    icon:temp.CategoryIcon,
+                    url:temp.CategoryUrl
+                });
 
             }
             res.json({"code": 200, "data": list});
+        } catch (e) {
+            console.log(e);
+            res.json({"code": 300, "data": "error"});
+        }
+    });
+}
+
+
+/*
+**添加商品分类
+*name 名字
+*type 1=>首页分类,icon=>图标,url=>服务器上维护的单页面
+*type 2=>按症状找药分类,icon=>无效,url=>无效
+*type 3=>按科室找药分类,icon=>图标,url=>无效
+*type 4=>分类页分类,icon=>无效,url=>无效
+*/
+function addGoodsCategory(req, res){
+    Sync(function () {
+        try {
+            var sql;
+            var type = req.body.type;
+            var name = req.body.name;
+            var icon = req.body.icon;
+            var url = req.body.url;
+            mysql_db.query.sync(
+                mysql_db,
+                'insert into bbx_goodscategory(CategoryTitle,CreateTime,CategoryType,CategoryIcon,CategoryUrl)values(?,?,?,?,?)',
+                [name, new Date(), type, icon, url]
+            );
+            res.json({"code": 200, "data": []});
+        } catch (e) {
+            console.log(e);
+            res.json({"code": 300, "data": "error"});
+        }
+    });
+}
+
+
+function editGoodsCategory(req, res){
+    Sync(function () {
+        try {
+            var sql;
+            var Id = req.body.Id;
+            var name = req.body.name;
+            var icon = req.body.icon;
+            var url = req.body.url;
+            mysql_db.query.sync(
+                mysql_db,
+                'update bbx_goodscategory set CategoryTitle=?,CategoryIcon=?,CategoryUrl=? where Id=?',
+                [name,icon,url,Id]
+            );
+            res.json({"code": 200, "data": []});
+        } catch (e) {
+            console.log(e);
+            res.json({"code": 300, "data": "error"});
+        }
+    });
+}
+
+function editSubGoodsCategory(req, res){
+    Sync(function () {
+        try {
+            var sql;
+            var Id = req.body.Id;
+            var name = req.body.name;
+            var icon = req.body.icon;
+            mysql_db.query.sync(
+                mysql_db,
+                'update bbx_goodscategory_2 set name=?,icon=? where Id=?',
+                [name,icon,Id]
+            );
+            res.json({"code": 200, "data": []});
+        } catch (e) {
+            console.log(e);
+            res.json({"code": 300, "data": "error"});
+        }
+    });   
+}
+
+//删除商品一级分类
+function deleteGoodsCategory(req, res){
+    Sync(function () {
+        try {
+            var sql;
+            var Id = req.body.Id;
+            mysql_db.query.sync(
+                mysql_db,
+                'delete from bbx_goodscategory where Id=?',
+                [Id]
+            );
+            res.json({"code": 200, "data": []});
+        } catch (e) {
+            console.log(e);
+            res.json({"code": 300, "data": "error"});
+        }
+    });
+}
+
+//删除商品二级分类
+function deleteSubGoodsCategory(req, res){
+    Sync(function () {
+        try {
+            var sql;
+            var Id = req.body.Id;
+            mysql_db.query.sync(
+                mysql_db,
+                'delete from bbx_goodscategory_2 where Id=?',
+                [Id]
+            );
+            res.json({"code": 200, "data": []});
         } catch (e) {
             console.log(e);
             res.json({"code": 300, "data": "error"});
@@ -63,7 +169,8 @@ function getGoodsCategory2(req, res) {
             for (var i = 0; i < result.length; i++) {
                 list.push({
                     Id: result[i].id,
-                    categoryName: result[i].name
+                    categoryName: result[i].name,
+                    icon:result[i].icon
                 });
             }
             res.json({"code": 200, "data": list});
@@ -867,10 +974,85 @@ function resetGoodsSaleState(req, res) {
     });
 }
 
+//获取每个商品所对应的分类
+function getGoodsCategories(req, res){
+    Sync(function () {
+        var Id = req.body.Id;//商品Id
+        var sql = "select a.CategoryTitle,a.CategoryType,b.name,c.Id from bbx_goodscategory "+
+                "a left join bbx_goodscategory_2 b on a.Id=b.parentId left join "+
+                "bbx_goods2category c on c.goodsCategory=b.id where c.goodsId='"+
+                Id + "'";
+
+        console.log(sql);
+
+        var result = mysql_db.query.sync(mysql_db, sql)[0];
+        res.json({code: 200, data: result});
+    });   
+}
+
+//按类型获取二级分类
+function categoryType(req,res){
+    Sync(function(){
+        var type = req.body.type;
+        var sql = "select Id,CategoryTitle from bbx_goodscategory where "+
+                    "CategoryType='"+type+"'";
+        var result = mysql_db.query.sync(mysql_db,sql)[0];
+        res.json({code:200,data:result});
+    });
+}
+
+//按类型获取三级分类
+function categoryType3(req,res){
+    Sync(function(){
+        var type = req.body.type;
+        var sql = "select id,name from bbx_goodscategory_2 where "+
+                    "parentId='"+type+"'";
+        var result = mysql_db.query.sync(mysql_db,sql)[0];
+        res.json({code:200,data:result});
+    });   
+}
+
+//增加分类
+function goods2category(req,res){
+    Sync(function(){
+        var type = req.body.type;
+        var Id = req.body.Id;
+        mysql_db.query.sync(
+                mysql_db,
+                'insert into bbx_goods2category(goodsId,goodsCategory)values(?,?)',
+                [Id,type]
+            );
+        res.json({"code": 200, "data": []});
+    });   
+}
+
+//删除商品的分类
+function delete_goods2category(req,res){
+    Sync(function(){
+        var Id = req.body.Id;
+        mysql_db.query.sync(
+                mysql_db,
+                'delete from bbx_goods2category where Id=?',
+                [Id]
+            );
+        res.json({"code": 200, "data": []});
+    });      
+}
+
+exports.delete_goods2category = delete_goods2category;
+exports.getGoodsCategories = getGoodsCategories;
+exports.goods2category = goods2category;
+exports.categoryType3 = categoryType3;
+exports.categoryType = categoryType;
 exports.getGoodsColors = getGoodsColors;
 exports.getGoodsSize = getGoodsSize;
 exports.getGoodsCategory = getGoodsCategory;
 exports.getGoodsCategory2 = getGoodsCategory2;
+exports.addGoodsCategory = addGoodsCategory;
+exports.editGoodsCategory = editGoodsCategory;
+exports.editSubGoodsCategory = editSubGoodsCategory;
+exports.deleteGoodsCategory = deleteGoodsCategory;
+exports.deleteSubGoodsCategory = deleteSubGoodsCategory;
 exports.getGoodsGroups = getGoodsGroups;
 exports.getGoodsGroupInfo = getGoodsGroupInfo;
 exports.createGoodsGroup = createGoodsGroup;

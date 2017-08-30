@@ -903,31 +903,40 @@ function modifyGoods(args) {
  * @returns {*}
  */
 function deleteGoodsGroup(groupId, State) {
-    var def = $.Deferred();
-    $.ajax({
-        url: AppConfig.URL.GOODS_DELETE + "/" + groupId,
-        type: 'POST',
-        data: JSON.stringify({State: State}),
-        dataType: 'JSON',
-        contentType: 'application/json',
-        success: function (res) {
-            if (200 === res.code) {
-                //console.log(res.data);
-                def.resolve(res.data);
-            } else {
-                //console.log(res.data);
-                layer.alert(res.data);
+    if(confirm("确认删除?")){
+        var def = $.Deferred();
+        $.ajax({
+            url: AppConfig.URL.GOODS_DELETE + "/" + groupId,
+            type: 'POST',
+            data: JSON.stringify({State: State}),
+            dataType: 'JSON',
+            contentType: 'application/json',
+            success: function (res) {
+                if (200 === res.code) {
+                    //console.log(res.data);
+                    def.resolve(res.data);
+                } else {
+                    //console.log(res.data);
+                    layer.alert(res.data);
+                    def.resolve(null);
+                }
+            },
+            error: function (err) {
+                console.error(err, "与服务器通信发生错误。");
+                layer.alert("与服务器通信发生错误。");
                 def.resolve(null);
             }
-        },
-        error: function (err) {
-            console.error(err, "与服务器通信发生错误。");
-            layer.alert("与服务器通信发生错误。");
-            def.resolve(null);
-        }
-    });
-    return def.promise();
+        });
+        return def.promise();
+    }
 }
+
+//分配和查看已有分类
+function category(Id){
+    alert(Id);
+}
+
+
 
 /**
  * @return Object

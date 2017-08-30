@@ -24,6 +24,11 @@ router.get('/goods/category', function (req, res) {
     res.render('goods/goods_category', req.session.user);
 });
 
+//商品二级分类
+router.get('/goods/sub_category',function(req,res){
+   res.render('goods/sub_category', {Id:req.query.Id}); 
+});
+
 //查询所有商品组接口
 router.post('/goodsgroup/list', function (req, res) {
     goodsController.getGoodsGroups(req, res);
@@ -67,6 +72,31 @@ router.post('/goodsgroup/delete/', function (req, res) {
 //查询商品分类接口
 router.post('/goods/category', function (req, res) {
     goodsController.getGoodsCategory(req, res);
+});
+
+//添加商品分类接口
+router.post('/goods/add_category', function (req, res) {
+    goodsController.addGoodsCategory(req, res);
+});
+
+//编辑商品分类接口
+router.post('/goods/edit_category', function (req, res) {
+    goodsController.editGoodsCategory(req, res);
+});
+
+//编辑商品二级分类接口
+router.post('/goods/edit_sub_category', function (req, res) {
+    goodsController.editSubGoodsCategory(req, res);
+});
+
+//删除商品分类接口
+router.post('/goods/delete_category', function (req, res) {
+    goodsController.deleteGoodsCategory(req, res);
+});
+
+//删除二级商品分类接口
+router.post('/goods/delete_sub_category', function (req, res) {
+    goodsController.deleteSubGoodsCategory(req, res);
 });
 
 //查询商品二级分类接口
@@ -127,4 +157,33 @@ router.post('/goods/updateGoodsSalePrice', function (req, res) {
 router.post('/goodsgroup/resetGoodsSaleState', function (req, res) {
     goodsController.resetGoodsSaleState(req, res);
 });
+
+//获取商品的类别
+router.post('/goods/get_goods_categories',function(req,res){
+   goodsController.getGoodsCategories(req, res); 
+});
+
+//分类获取二级类别
+router.post('/goods/category_type',function(req,res){
+    goodsController.categoryType(req,res);
+});
+
+//分类获取三级类别
+router.post('/goods/category_type3',function(req,res){
+    goodsController.categoryType3(req,res);
+});
+
+//增加商品的分类
+router.post('/goods/goods2category',function(req,res){
+   goodsController.goods2category(req,res); 
+});
+
+//删除商品的分类
+router.post('/goods/delete_goods2category',function(req,res){
+   goodsController.delete_goods2category(req,res); 
+});
+
+
+
+
 module.exports = router;

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>test</title>
+</head>
+<body>
+	<div onclick="test()">点我试试</div>
+	<script type="text/javascript" src="api.js"></script>
+	<script type="text/javascript">
+		function test(){
+			api.openWin({
+				name : 'shopping',
+				url : 'widget://html/shopping/index_window.html',
+				animation : {
+					type : "fade",
+					duration : 300
+				}
+			});
+		}
+	</script>
+</body>
+</html>

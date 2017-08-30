@@ -114,9 +114,11 @@ goods.list = {
      * @param goodsGroupId
      */
     deleteGoodGroup: function (goodsGroupId) {
-        var url = '/goodsgroup/delete/';
-        var param = {goodsGroupId: goodsGroupId};
-        common.ajax(url, param, goods.list._deleteSuc, goods.list._error);
+        if(confirm("确认删除？")){
+            var url = '/goodsgroup/delete/';
+            var param = {goodsGroupId: goodsGroupId};
+            common.ajax(url, param, goods.list._deleteSuc, goods.list._error);
+        }
     },
     _deleteSuc: function (data) {
         if (data.code == 200) {
@@ -128,5 +130,73 @@ goods.list = {
     },
     alertCannotEdit: function (brandTitle){
         layer.alert('您的品牌<span style="color: red;font-weight: bolder">'+ brandTitle + '</span>未通过审核，请联系管理员，审后才能编辑哦！');
+    },
+    kd_category:function(Id){
+        //获取所有的分类
+        $.ajax({
+            url: '/goods/get_goods_categories',
+            type: 'POST',
+            data:{Id:Id},
+            success: function (res) {
+                if (200 === res.code) {
+                    var data = res.data;
+                    $("#temp .container").empty();
+                    var types = ['','首页分类','按症状找药分类','按科室找药分类','分类页分类'];
+                    for(var i=0; i<data.length; i++){
+
+                        var name = types[data[i].CategoryType] +
+                                    '->'+
+                                    data[i].CategoryTitle+
+                                    '->'+
+                                    data[i].name;
+                        var t_Id = data[i].Id;
+                        var item = $('<div class="item">'+
+                            '<div class="left">'+name+'</div>'+
+                            '<div class="right" onclick="delete_category('+t_Id+')">X</div>'+
+                            '</div>');
+                        $("#temp .container").append(item);
+                    }
+                    layer.open({
+                        title:"分类信息",
+                        type:1,
+                        content:$("#temp"),
+                        btn:['添加','关闭'],
+                        yes:function(index){
+                            layer.open({
+                                title:"添加分类",
+                                type:1,
+                                btn:['确定','取消'],
+                                content:$("#temp1"),
+                                yes:function(index){
+                                    var category = $("#level3").val();
+                                    if(category){
+                                        goods.list.kd_add_category(Id,category);
+                                    }
+                                }
+                            });
+                        }
+                    });
+                }
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+        
+    },
+    kd_add_category:function(Id,category){
+        $.ajax({
+            url: '/goods/goods2category',
+            type: 'POST',
+            data:{Id:Id,type:category},
+            success: function (res) {
+                if (200 === res.code) {
+                    history.go(0);
+                }
+            },
+            error: function (err) {
+                layer.alert("查询商品分类失败，请刷新页面重试。");
+            }
+        });
     }
 };

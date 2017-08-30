@@ -33,6 +33,10 @@
     .portlet-title {
         border: 0 !important;
     }
+
+    .ct{
+        cursor: pointer; color: blue;
+    }
 </style>
 <div class="page-content">
     <div class="container-fluid">
@@ -61,12 +65,25 @@
                                 </h4>
                             </div>
                         </div>
+
+                        <div style="width: 10%; display: inline-block;" class="span2">
+                            <a href="javascript:;" class="btn red start"
+                               style="color: #ffffff;text-decoration: none;padding: 5px" onclick="add_category()">
+                                <i class="icon-plus icon-white"></i>
+                                <span>添加分类</span>
+                            </a>
+                        </div>
+
                         <div class="portlet-body" style="margin-top: -5px;">
                             <table class="table table-striped table-bordered table-advance table-hover">
                                 <thead>
                                 <tr>
                                     <th><i class="icon-flag"></i> 序号</th>
                                     <th><i class="icon-bookmark"> 分类名称</i></th>
+                                    <th><i class="icon-bookmark"> 分类类型</i></th>
+                                    <th><i class="icon-bookmark"> 图标</i></th>
+                                    <th><i class="icon-bookmark"> 链接地址</i></th>
+                                    <th><i class="icon-bookmark"> 操作</i></th>
                                 </tr>
                                 </thead>
                                 <tbody id="listTBody">
@@ -81,6 +98,70 @@
     </div>
 </div>
 </div>
+
+<div id="add_index_category" style="display: none;">
+    <table style="margin-left: 20px; margin-top:20px;">
+
+        <tr>
+            <td height="40" valign="middle">类型</td>
+            <td height="40" valign="middle">
+                <p>
+                    <input type="radio" name="type" value="1">&nbsp;首页分类&nbsp;&nbsp;&nbsp;&nbsp;
+                    <input type="radio" name="type" value="2">&nbsp;按症状找药分类    
+                </p>
+                <p>
+                    <input type="radio" name="type" value="3">&nbsp;按科室找药分类&nbsp;&nbsp;&nbsp;&nbsp;
+                    <input type="radio" name="type" value="4">&nbsp;分类页分类
+                </p>
+            </td>
+        </tr>
+
+        <tr>
+            <td height="40" valign="middle">名字</td>
+            <td height="40" valign="middle">
+                <input type="text" name="name" class="m-wrap large" placeholder="分类名字" />
+            </td>
+        </tr>
+        <tr>
+            <td height="40" valign="middle">图标链接</td>
+            <td height="40" valign="middle">
+                <input type="text" name="icon" placeholder="图标链接" class="m-wrap large" />
+            </td>
+        </tr>
+        <tr>
+            <td height="40" valign="middle">页面链接</td>
+            <td height="40" valign="middle">
+                <input type="text" name="url" placeholder="页面链接" class="m-wrap large" />
+            </td>
+        </tr>
+    </table>
+</div>
+
+
+<div id="edit_category" style="display: none;">
+    <table style="margin-left: 20px; margin-top:20px;">
+        <tr>
+            <td height="40" valign="middle">名字</td>
+            <td height="40" valign="middle">
+                <input type="text" id="name" name="name" class="m-wrap large" placeholder="分类名字" />
+            </td>
+        </tr>
+        <tr>
+            <td height="40" valign="middle">图标链接</td>
+            <td height="40" valign="middle">
+                <input type="text" name="icon" id="icon" placeholder="图标链接" class="m-wrap large" />
+            </td>
+        </tr>
+        <tr>
+            <td height="40" valign="middle">页面链接</td>
+            <td height="40" valign="middle">
+                <input type="text" name="url" id="url" placeholder="页面链接" class="m-wrap large" />
+            </td>
+        </tr>
+    </table>
+</div>
+
+
 <%- include('../footer.html')%>
 <script type="text/javascript" src="../javascripts/utils/layer/layer.js"></script>
 <script type="text/javascript" src="../javascripts/config.js"></script>

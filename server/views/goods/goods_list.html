@@ -216,6 +216,8 @@
                     编辑</a>
                     <a style="cursor: pointer" onclick="goods.list.deleteGoodGroup('[%=list[i].Id%]')"
                        class="btn mini black btnEditGroup"><i class="icon-trash"></i> 删除</a>
+                    <a style="cursor: pointer" onclick="goods.list.kd_category('[%=list[i].Id%]')"
+                       class="btn mini red btnEditGroup"><i class="icon-edit"></i> 分类</a>
                 </div>
             </div>
         </div>
@@ -225,9 +227,148 @@
     [% }%]
 </script>
 
+<style type="text/css">
+#temp{display:none;}
+#temp .container{margin-left:20px; margin-top: 20px; width: 100%;}
+#temp .container .item{
+    width: auto; height: 24px; line-height: 24px; background-color: red; color: #fff;
+    float: left; margin: 5px 5px;  border-radius: 3px !important;
+}
+#temp .container .item .left{
+    float: left; width: auto; padding:0 5px; color: #fff; 
+    border-right: 1px solid #fff;
+}
+#temp .container .item .right{
+    float: left; width: auto; padding:0 5px; color:#fff; cursor: pointer;
+}
+#temp .container .item .right:hover{
+    color:#333;
+}
+#temp1{display: none;}
+</style>
 
-modified:   controller/goodsController.js
-    modified:   public/javascripts/goods/edit.js
-    modified:   views/goods/detail.html
-    modified:   views/goods/edit.html
-    modified:   views/goods/goods_list.html
+<div id="temp">
+    <div class="container">
+        <div class="item">
+            <div class="left">123</div>
+            <div class="right">X</div>
+        </div>
+    </div>
+</div>
+
+
+<div id="temp1">
+    <table style="margin: 20px;">
+        <tr>
+            <td height="40" valign="middle">一级分类</td>
+            <td height="40" valign="middle">
+                <select id="level1" onchange="change_level2()">
+                    <option value="1">首页分类</option>
+                    <option value="2">按症状找药分类</option>
+                    <option value="3">按科室找药分类</option>
+                    <option value="4">分类页分类</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td height="40" valign="middle">二级分类</td>
+            <td height="40" valign="middle">
+                <select id="level2" onchange="change_level3()">
+                    
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td height="40" valign="middle">三级分类</td>
+            <td height="40" valign="middle">
+                <select id="level3">
+                    
+                </select>
+            </td>
+        </tr>
+    </table>
+</div>
+
+
+<script type="text/javascript">
+//初始化二级分类和三级分类
+window.onload = function(){
+    get_level2(1);
+}
+
+function change_level2(){
+    var type = $("#level1").val();
+    $("#level2").empty();
+    $("#level3").empty();
+    get_level2(type);
+}
+
+function change_level3(){
+    var type = $("#level2").val();
+    $("#level3").empty();
+    get_level3(type);
+}
+
+function get_level2(type){
+    $.ajax({
+        url: AppConfig.URL.GOODS_CATEGORY_TYPE,
+        type: 'POST',
+        data:{type:type},
+        success: function (res) {
+            if (200 === res.code) {
+                var data = res.data;
+                $("#level2").empty();
+                if(data.length>0){
+                    get_level3(data[0].Id);
+                }
+                for(var i=0; i<data.length; i++){
+                    var option = $("<option value='"+data[i].Id+"'>"+data[i].CategoryTitle+"</option>");
+                    $("#level2").append(option);
+                }
+            }
+        },
+        error: function (err) {
+            layer.alert("查询商品分类失败，请刷新页面重试。");
+        }
+    });
+}
+
+
+function get_level3(type){
+    $.ajax({
+        url: AppConfig.URL.GOODS_CATEGORY_TYPE3,
+        type: 'POST',
+        data:{type:type},
+        success: function (res) {
+            if (200 === res.code) {
+                var data = res.data;
+                $("#level3").empty();
+                for(var i=0; i<data.length; i++){
+                    var option = $("<option value='"+data[i].id+"'>"+data[i].name+"</option>");
+                    $("#level3").append(option);
+                }
+            }
+        },
+        error: function (err) {
+            layer.alert("查询商品分类失败，请刷新页面重试。");
+        }
+    });
+}
+
+function delete_category(Id){
+    $.ajax({
+        url: '/goods/delete_goods2category',
+        type: 'POST',
+        data:{Id:Id},
+        success: function (res) {
+            if (200 === res.code) {
+                history.go(0);
+            }
+        },
+        error: function (err) {
+            layer.alert("删除商品分类失败，请刷新页面重试。");
+        }
+    });
+}
+
+</script>
