@@ -1039,6 +1039,22 @@ function delete_goods2category(req,res){
     });      
 }
 
+//添加三级分类
+function addSubCategory(req,res){
+    Sync(function(){
+        var type = req.body.type;
+        var name = req.body.name;
+        var icon = req.body.icon;
+        mysql_db.query.sync(
+                mysql_db,
+                'insert into bbx_goodscategory_2(parentId,name,icon)values(?,?,?)',
+                [type,name,icon]
+            );
+        res.json({"code": 200, "data": []});
+    });         
+}
+
+exports.addSubCategory = addSubCategory;
 exports.delete_goods2category = delete_goods2category;
 exports.getGoodsCategories = getGoodsCategories;
 exports.goods2category = goods2category;

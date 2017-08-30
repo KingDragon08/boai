@@ -163,6 +163,11 @@ router.post('/goods/get_goods_categories',function(req,res){
    goodsController.getGoodsCategories(req, res); 
 });
 
+//添加三级分类
+router.post('/goods/add_sub_category',function(req,res){
+    goodsController.addSubCategory(req,res);
+});
+
 //分类获取二级类别
 router.post('/goods/category_type',function(req,res){
     goodsController.categoryType(req,res);

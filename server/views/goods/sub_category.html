@@ -205,16 +205,28 @@ function add_category(){
         area:['450px'],
         btn:['添加','取消'],
         yes:function(index){
-            var kd_type = $("#add_index_category input[name='type']:checked").val()
+            var kd_type = common.QueryString("Id");
             var name = $("#add_index_category input[name='name']").val();
             var icon = $("#add_index_category input[name='icon']").val();
-            var url = $("#add_index_category input[name='url']").val();
-            if(name.length>0 && icon.length>5 && url.length>5){
-                _add_category(kd_type,name,icon,url).done(function(){
-                    console.log("add_category success");
-                    layer.close(index);
-                    history.go(0);
+            if(name.length>0 && icon.length>5){
+
+                $.ajax({
+                    url: '/goods/add_sub_category',
+                    type: 'POST',
+                    data:{type:kd_type,name:name,icon:icon},
+                    success: function (res) {
+                        if (200 === res.code) {
+                            console.log("add_sub_category success");
+                            layer.close(index);
+                            history.go(0);
+                        }
+                    },
+                    error: function (err) {
+                        console.log(err);
+                        layer.alert("添加商品分类失败，请刷新页面重试。");
+                    }
                 });
+
             } else {
                 alert("信息不完整");
             }
@@ -222,6 +234,11 @@ function add_category(){
     });
 
 }
+
+function _add_category(type,name,icon,url){
+    alert(type);
+}
+
 
 function edit(Id,name,icon){
     $("#name").val(name);
